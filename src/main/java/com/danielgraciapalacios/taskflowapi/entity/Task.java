@@ -60,6 +60,19 @@ public class Task {
 
     public Task (){}
 
+    public Task(String title, String description, Priority priority, LocalDateTime dueDate, TaskList taskList, User creator, User userAssigned, Set<Tag> tags) {
+        this.title = title;
+        this.description = description;
+        this.priority = priority;
+        this.dueDate = dueDate;
+        this.taskList = taskList;
+        this.creator = creator;
+        this.userAssigned = userAssigned;
+        this.tags = tags;
+
+        this.status = Status.PENDING;
+    }
+
     public Task(String title, String description, User creator, User userAssigned, Priority priority, LocalDateTime dueDate, Set<Tag> tags) {
         this.title = title;
         this.description = description;
@@ -82,12 +95,16 @@ public class Task {
         updatedAt = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
+    public void addTag(Tag tag) {
+        tags.add(tag);
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -146,28 +163,12 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     @Override
@@ -175,15 +176,9 @@ public class Task {
         return "Task{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", creator=" + creator +
-                ", userAssigned=" + userAssigned +
                 ", priority=" + priority +
                 ", status=" + status +
                 ", dueDate=" + dueDate +
-                ", tags=" + tags +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 '}';
     }
 

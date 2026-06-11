@@ -4,39 +4,34 @@ import jakarta.persistence.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "task")
-public class Task {
+public class Task extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String title;
 
-    @Column()
+    @Column(length = 2000)
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private Priority priority;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status;
+    @Column(nullable = false, length = 20)
+    private Status status = Status.PENDING;
 
     @Column
     private LocalDateTime dueDate;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "task_list_id", nullable = false)
@@ -48,7 +43,7 @@ public class Task {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_user_id")
-    private User userAssigned;
+    private User assignedUser;
 
     @ManyToMany
     @JoinTable(
@@ -58,49 +53,13 @@ public class Task {
     )
     private Set<Tag> tags = new HashSet<>();
 
-    public Task (){}
+    public Task () {}
 
-    public Task(String title, String description, Priority priority, LocalDateTime dueDate, TaskList taskList, User creator, User userAssigned, Set<Tag> tags) {
+    public Task(String title, Priority priority, TaskList taskList, User creator) {
         this.title = title;
-        this.description = description;
         this.priority = priority;
-        this.dueDate = dueDate;
         this.taskList = taskList;
         this.creator = creator;
-        this.userAssigned = userAssigned;
-        this.tags = tags;
-
-        this.status = Status.PENDING;
-    }
-
-    public Task(String title, String description, User creator, User userAssigned, Priority priority, LocalDateTime dueDate, Set<Tag> tags) {
-        this.title = title;
-        this.description = description;
-        this.creator = creator;
-        this.userAssigned = userAssigned;
-        this.priority = priority;
-        this.dueDate = dueDate;
-        this.tags = tags;
-        this.status = Status.PENDING;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
-
-    public void addTag(Tag tag) {
-        tags.add(tag);
-    }
-
-    public void removeTag(Tag tag) {
-        tags.remove(tag);
     }
 
     public Long getId() {
@@ -123,6 +82,14 @@ public class Task {
         this.description = description;
     }
 
+    public TaskList getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(TaskList taskList) {
+        this.taskList = taskList;
+    }
+
     public User getCreator() {
         return creator;
     }
@@ -131,12 +98,12 @@ public class Task {
         this.creator = creator;
     }
 
-    public User getUserAssigned() {
-        return userAssigned;
+    public User getAssignedUser() {
+        return assignedUser;
     }
 
-    public void setUserAssigned(User userAssigned) {
-        this.userAssigned = userAssigned;
+    public void setAssignedUser(User assignedUser) {
+        this.assignedUser = assignedUser;
     }
 
     public Priority getPriority() {
@@ -163,22 +130,26 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public Set<Tag> getTags() {
+        return Collections.unmodifiableSet(tags);
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public void addTag(Tag tag) {
+        tags.add(tag);
+    }
+
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
     }
 
     @Override
     public String toString() {
         return "Task{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
                 ", priority=" + priority +
                 ", status=" + status +
                 ", dueDate=" + dueDate +
+                ", createdAt=" + getCreatedAt() +
                 '}';
     }
 

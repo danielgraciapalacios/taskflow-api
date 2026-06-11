@@ -37,8 +37,7 @@ public class User {
     @Column(nullable = false)
     private boolean active;
     
-    public User() {
-    }
+    public User() {}
 
     public User(String firstName, String lastName, String username, String email, String password) {
         this.firstName = firstName;

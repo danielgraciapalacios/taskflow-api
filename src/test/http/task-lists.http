@@ -1,0 +1,49 @@
+### TaskFlow API — Listas de tareas
+### Ejecuta cada petición con el botón ▶ (run) que aparece a la izquierda.
+### Requiere la app arrancada en http://localhost:8080
+
+@host = http://localhost:8080
+
+### 1. Crear una lista (POST) → 201 Created + header Location
+# @name crearLista
+POST {{host}}/api/task-lists
+Content-Type: application/json
+
+{
+  "name": "Tareas del hogar",
+  "description": "Cosas pendientes de casa"
+}
+
+### 2. Listar todas las listas (GET) → 200 OK con un array
+GET {{host}}/api/task-lists
+
+### 3. Obtener una lista por id (GET) → 200 OK
+### Usa el id que te devolvió la creación (cámbialo si no es 1)
+GET {{host}}/api/task-lists/1
+
+### 4. Actualizar una lista (PUT) → 200 OK
+PUT {{host}}/api/task-lists/1
+Content-Type: application/json
+
+{
+  "name": "Tareas del hogar (actualizada)",
+  "description": "Lista revisada"
+}
+
+### 5. Borrar una lista (DELETE) → 204 No Content
+DELETE {{host}}/api/task-lists/1
+
+### --- CASOS DE ERROR (para probar que la API responde bien al fallo) ---
+
+### 6. Obtener una lista inexistente → 404 Not Found (Problem Details)
+GET {{host}}/api/task-lists/99999
+
+### 7. Crear con nombre vacío → 400 Bad Request (validación)
+### NOTA: esto devolverá un error feo hasta que añadamos el handler de validación
+POST {{host}}/api/task-lists
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "Sin nombre, debería fallar"
+}

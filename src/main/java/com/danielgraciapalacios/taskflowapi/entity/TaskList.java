@@ -3,7 +3,6 @@ package com.danielgraciapalacios.taskflowapi.entity;
 import jakarta.persistence.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
